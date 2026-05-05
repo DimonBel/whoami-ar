@@ -1,4 +1,6 @@
 import { useEffect, useRef, memo } from 'react';
+import { heroes } from '../assets.js';
+import '../aframe-setup.js';
 
 const ARScene = memo(function ARScene() {
   const containerRef = useRef(null);
@@ -23,6 +25,25 @@ const ARScene = memo(function ARScene() {
     trex.setAttribute('gltf-model', 'trex/scene.gltf');
     hiroMarker.appendChild(trex);
     scene.appendChild(hiroMarker);
+
+    const markers = heroes.map((hero, i) => {
+      const { rotation, scale, gltfModel, width, height, src } = hero;
+      const marker = document.createElement('a-marker');
+      marker.setAttribute('type', 'barcode');
+      marker.setAttribute('markerhandler', true);
+      marker.setAttribute('value', i);
+      if (src) {
+        marker.innerHTML = `<a-image rotation="-90 0 0" width="${width}" height="${height}" src="${src}"></a-image>`;
+      } else {
+        const binScale = scale
+          .split(' ')
+          .map((n) => n * 2)
+          .join(' ');
+        marker.innerHTML = `<a-entity rotation="${rotation}" scale="${binScale}" gltf-model="${gltfModel}"></a-entity>`;
+      }
+      return marker;
+    });
+    scene.prepend(...markers);
 
     const camera = document.createElement('a-entity');
     camera.setAttribute('camera', '');
