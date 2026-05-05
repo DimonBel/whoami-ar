@@ -1,0 +1,59 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+#root {
+  width: 100vw;
+  height: 100vh;
+}
+
+#menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  background: #000000aa;
+  padding: 10px;
+  z-index: 100;
+}
+
+#menu button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: white;
+  font-size: 16px;
+  padding: 8px 16px;
+}
+
+#menu button img {
+  width: 30px;
+  height: 30px;
+}
+
+#barcode-container {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  display: none;
+}
+
+#barcode-container.show-barcode {
+  display: block;
+}
+
+#barcode-img {
+  width: 200px;
+  height: 200px;
+}
+
+#warning {
+  color: white;
+  text-align: center;
+}
