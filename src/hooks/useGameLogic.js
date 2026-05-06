@@ -16,6 +16,7 @@ export function useGameLogic() {
       if (!shouldRestart) return;
     }
 
+    setScanning(false);
     const pickedHeroes = getPickedHeroes(heroes);
     const remainingCharacters = heroes
       .map((_, index) => index)
@@ -33,7 +34,6 @@ export function useGameLogic() {
   }, [playerId]);
 
   const joinGame = useCallback(async () => {
-    setScanning((prev) => !prev);
     if (!scanning) {
       if (playerId) {
         const shouldRestart = window.notie.confirm({
@@ -41,12 +41,12 @@ export function useGameLogic() {
           position: 'bottom',
         });
         if (!shouldRestart) {
-          setScanning(false);
           return;
         }
       }
 
       setPlayerId(undefined);
+      setScanning(true);
       window.notie.alert({
         type: 'info',
         text: "<b>Scan other players Barcodes, then press 'Finish Scanning' button</b>",
@@ -61,9 +61,9 @@ export function useGameLogic() {
           time: 5,
           position: 'bottom',
         });
-        setScanning(true);
         return;
       }
+      setScanning(false);
       const pickedHeroes = getPickedHeroes(heroes);
       const remainingCharacters = heroes
         .map((_, index) => index)

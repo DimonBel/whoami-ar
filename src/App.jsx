@@ -9,16 +9,10 @@ import { useGameLogic } from './hooks/useGameLogic';
 function App() {
   const [showHowToPlay, setShowHowToPlay] = useState(true);
   const [showBarcode, setShowBarcode] = useState(false);
-  const { playerId, createGame, joinGame, onMarkerFound } = useGameLogic();
+  const { playerId, scanning, createGame, joinGame, onMarkerFound } = useGameLogic();
 
   const handleToggleBarcode = () => {
     setShowBarcode((prev) => !prev);
-    const barcodeBtn = document.getElementById('barcodebtn');
-    if (barcodeBtn) {
-      barcodeBtn.innerHTML = showBarcode
-        ? '<img src="icons/reconnect-icon_barcode.svg">'
-        : '<img src="icons/reconnect-icon_camera.svg">';
-    }
   };
 
   return (
@@ -28,6 +22,8 @@ function App() {
         onCreateGame={createGame}
         onJoinGame={joinGame}
         onToggleBarcode={handleToggleBarcode}
+        scanning={scanning}
+        showBarcode={showBarcode}
       />
       <BarcodeView playerId={playerId} show={showBarcode} />
       <ARScene onMarkerFound={onMarkerFound} />
