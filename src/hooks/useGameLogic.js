@@ -2,6 +2,12 @@ import { useState, useCallback } from 'react';
 import { heroes } from '../utils/assets';
 import { getPickedHeroes, setPlayerIdInPickedHeroes } from '../utils/storage';
 
+function promiseNotieConfirm(options) {
+  return new Promise((resolve) => {
+    window.notie.confirm(options, () => resolve(true), () => resolve(false));
+  });
+}
+
 export function useGameLogic() {
   const [playerId, setPlayerId] = useState(undefined);
   const [scanning, setScanning] = useState(false);
@@ -9,7 +15,7 @@ export function useGameLogic() {
 
   const createGame = useCallback(async () => {
     if (playerId) {
-      const shouldRestart = window.notie.confirm({
+      const shouldRestart = await promiseNotieConfirm({
         text: "<b>You have a character selected! Are you sure that you want to create a game?</b>",
         position: 'bottom',
       });
@@ -36,7 +42,7 @@ export function useGameLogic() {
   const joinGame = useCallback(async () => {
     if (!scanning) {
       if (playerId) {
-        const shouldRestart = window.notie.confirm({
+        const shouldRestart = await promiseNotieConfirm({
           text: "<b>You have a character selected! Are you sure that you want to start scanning?</b>",
           position: 'bottom',
         });
