@@ -1,4 +1,5 @@
 import hashlib
+import os
 import secrets
 import base64
 from datetime import datetime, timedelta
@@ -12,7 +13,7 @@ from sqlalchemy.orm import Session
 from database import get_db
 from models import User
 
-SECRET_KEY = "whoami-ar-secret-key-change-in-production"
+SECRET_KEY = os.environ.get("SECRET_KEY", "whoami-ar-secret-key-change-in-production")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
