@@ -14,32 +14,39 @@ export default function ARScene({ onMarkerFound }) {
     if (!scene) return;
 
     const base = import.meta.env.BASE_URL;
+    let markers = [];
 
-    const markers = heroes.map((hero, i) => {
-      const { rotation, scale, gltfModel, width, height, src } = hero;
-      const marker = document.createElement("a-marker");
-      marker.setAttribute("type", "barcode");
-      marker.setAttribute("value", i);
-      if (src) {
-        marker.innerHTML = `<a-image rotation="-90 0 0" width="${width}" height="${height}" src="${base}${src}"></a-image>`;
-      } else {
-        const binScale = scale
-          .split(" ")
-          .map((n) => String(Number(n) * 2))
-          .join(" ");
-        marker.innerHTML = `<a-entity rotation="${rotation}" scale="${binScale}" gltf-model="${gltfModel}"></a-entity>`;
-      }
-
-      marker.addEventListener("markerFound", () => {
-        onMarkerFoundRef.current(Number(marker.getAttribute("value")));
+    const addMarkers = () => {
+      markers = heroes.map((hero, i) => {
+        const { rotation, scale, gltfModel, width, height, src } = hero;
+        const marker = document.createElement("a-marker");
+        marker.setAttribute("type", "barcode");
+        marker.setAttribute("value", i);
+        if (src) {
+          marker.innerHTML = `<a-image rotation="-90 0 0" width="${width}" height="${height}" src="${base}${src}"></a-image>`;
+        } else {
+          const binScale = scale
+            .split(" ")
+            .map((n) => String(Number(n) * 2))
+            .join(" ");
+          marker.innerHTML = `<a-entity rotation="${rotation}" scale="${binScale}" gltf-model="${gltfModel}"></a-entity>`;
+        }
+        marker.addEventListener("markerFound", () => {
+          onMarkerFoundRef.current(Number(marker.getAttribute("value")));
+        });
+        return marker;
       });
+      markers.forEach((m) => scene.appendChild(m));
+    };
 
-      return marker;
-    });
-
-    markers.forEach((m) => scene.prepend(m));
+    if (scene.hasLoaded) {
+      addMarkers();
+    } else {
+      scene.addEventListener("loaded", addMarkers);
+    }
 
     return () => {
+      scene.removeEventListener("loaded", addMarkers);
       markers.forEach((m) => m.remove());
     };
   }, []);

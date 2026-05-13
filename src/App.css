@@ -356,8 +356,10 @@ li {
 
 
 /* AR.js */
-.a-enter-vr {
-  display: none;
+.a-enter-vr,
+.a-enter-ar,
+.a-orientation-modal {
+  display: none !important;
 }
 
 a-scene {
