@@ -78,7 +78,7 @@ export default function RoomBrowser({ onEnterRoom }) {
       </div>
 
       {isAdmin && (
-        <div style={{ padding: "10px 15px" }}>
+        <div className="room-create-bar">
           <button className="btn-create" onClick={() => setShowForm(true)}>
             + Create Room
           </button>
@@ -116,18 +116,9 @@ export default function RoomBrowser({ onEnterRoom }) {
       )}
 
       {(hasPrev || hasMore) && (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            gap: "10px",
-            padding: "10px",
-          }}
-        >
+        <div className="room-pagination">
           {hasPrev && (
-            <button
-              onClick={() => setSkip(Math.max(0, skip - LIMIT))}
-            >
+            <button onClick={() => setSkip(Math.max(0, skip - LIMIT))}>
               Prev
             </button>
           )}

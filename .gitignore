@@ -39,3 +39,4 @@ __pycache__/
 *.pyc
 backend/app.db
 backend/.venv/
+backend/venv/
