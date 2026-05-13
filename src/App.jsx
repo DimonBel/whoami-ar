@@ -1,35 +1,13 @@
 import { useState, useRef, useCallback } from "react";
 import notie from "notie";
 import { heroes } from "./assets.js";
+import { useAuth } from "./AuthContext.jsx";
+import { leaveRoom } from "./api.js";
 import Menu from "./components/Menu.jsx";
 import BarcodeContainer from "./components/BarcodeContainer.jsx";
 import ARScene from "./components/ARScene.jsx";
-
-const LOCAL_STORAGE_KEY = "pickedHeroes";
-const PICKED_HEROES_TTL_IN_MS = 300000;
-
-function getPickedHeroes() {
-  const pickedHeroes = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
-  if (!pickedHeroes) return [];
-  if (pickedHeroes.expireAt < Date.now() || pickedHeroes.ids.length === heroes.length) {
-    localStorage.removeItem(LOCAL_STORAGE_KEY);
-    return [];
-  }
-  return pickedHeroes.ids;
-}
-
-function setPlayerIdInPickedHeroes(id) {
-  const pickedHeroes = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
-  if (!pickedHeroes) {
-    localStorage.setItem(
-      LOCAL_STORAGE_KEY,
-      JSON.stringify({ expireAt: Date.now() + PICKED_HEROES_TTL_IN_MS, ids: [id] })
-    );
-  } else {
-    pickedHeroes.ids = [...pickedHeroes.ids, id];
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(pickedHeroes));
-  }
-}
+import AuthScreen from "./components/AuthScreen.jsx";
+import RoomBrowser from "./components/RoomBrowser.jsx";
 
 function promiseNotieConfirm(options) {
   return new Promise((resolve, reject) => {
@@ -40,19 +18,13 @@ function promiseNotieConfirm(options) {
 }
 
 export default function App() {
+  const { user } = useAuth();
   const [playerId, setPlayerId] = useState(undefined);
   const [scanning, setScanning] = useState(false);
   const [showBarcode, setShowBarcode] = useState(false);
+  const [currentRoomId, setCurrentRoomId] = useState(null);
   const idsInGame = useRef(new Set());
   const showHowToPlayRef = useRef(true);
-
-  function showGameQRCode() {
-    notie.force({
-      type: "info",
-      text: `<h2>Let other players join by scanning the QR code</h2><img id="app-url" src="app-url.png">`,
-      position: "bottom",
-    });
-  }
 
   function showAbout() {
     notie.force({
@@ -67,14 +39,6 @@ export default function App() {
           <li><a href="https://www.linkedin.com/in/chebac-grigore-378524223/" target="_blank">Grigore Chebac</a></li>
           <li><a href="https://www.instagram.com/kstaty.art/" target="_blank">Nikita Dobrovenco</a></li>
         </ul>
-        <iframe
-          src="https://ghbtns.com/github-btn.html?user=strdr4605&repo=whoami-ar&type=star&count=true"
-          frameBorder="0"
-          scrolling="0"
-          width="110"
-          height="20"
-          title="GitHub"
-        ></iframe>
       `,
       position: "bottom",
     });
@@ -90,11 +54,10 @@ export default function App() {
           <h3>Augmented Reality edition</h3>
           <p>This is a multiplayer game.</p>
           <p>
-            You can create or join a game.
-            After your character was randomly selected you can show the Barcode to other players.
+            Join a room, then show the Barcode to other players.
           </p>
           <h4>
-            After all player have generated Barcodes, you can start asking
+            After all players have shown Barcodes, you can start asking
             <i>YES</i> or <i>NO</i> questions.
           </h4>
           <p>If answer to your question about the character is <b>YES</b> you can ask again.</p>
@@ -103,14 +66,6 @@ export default function App() {
         cancelText: "Close",
         position: "bottom",
         choices: [
-          {
-            type: "success",
-            text: "Show game QR code",
-            handler: () => {
-              showHowToPlayRef.current = true;
-              showGameQRCode();
-            },
-          },
           {
             type: "neutral",
             text: "About",
@@ -127,46 +82,36 @@ export default function App() {
     );
   }
 
-  async function createGame() {
-    if (playerId !== undefined) {
-      const shouldRestart = await promiseNotieConfirm({
-        text: "<b>You have a character selected! Are you sure that you want to create a game?</b>",
-        position: "bottom",
-      });
-      if (!shouldRestart) return;
-    }
-
-    const pickedHeroes = getPickedHeroes();
-    const remainingCharacters = heroes
-      .map((_, index) => index)
-      .filter((id) => !pickedHeroes.includes(id));
-    const newId = remainingCharacters[Math.floor(Math.random() * remainingCharacters.length)];
-    setPlayerIdInPickedHeroes(newId);
-    setPlayerId(newId);
+  async function handleEnterRoom(roomId, heroIndex) {
+    setCurrentRoomId(roomId);
+    setPlayerId(heroIndex);
     setScanning(false);
     setShowBarcode(false);
 
     notie.alert({
       type: "success",
-      text: "<b>Character selected, show Barcode for others to join</b>",
+      text: `<b>Character selected, show Barcode for others to join</b>`,
       time: 5,
       position: "bottom",
     });
   }
 
-  async function joinGame() {
+  async function handleLeaveRoom() {
+    if (currentRoomId) {
+      try {
+        await leaveRoom(currentRoomId);
+      } catch (e) {}
+    }
+    setCurrentRoomId(null);
+    setPlayerId(undefined);
+    setScanning(false);
+    setShowBarcode(false);
+  }
+
+  function joinGame() {
     const nowScanning = !scanning;
 
     if (nowScanning) {
-      if (playerId !== undefined) {
-        const shouldRestart = await promiseNotieConfirm({
-          text: "<b>You have a character selected! Are you sure that you want to start scanning?</b>",
-          position: "bottom",
-        });
-        if (!shouldRestart) return;
-      }
-
-      setPlayerId(undefined);
       setScanning(true);
       setShowBarcode(false);
       idsInGame.current.clear();
@@ -181,26 +126,17 @@ export default function App() {
       if (idsInGame.current.size === 0) {
         notie.alert({
           type: "error",
-          text: "<b>No Barcodes scanned, try scanning other players Barcodes, or create a game.</b>",
+          text: "<b>No Barcodes scanned, try scanning other players Barcodes.</b>",
           time: 5,
           position: "bottom",
         });
         return;
       }
 
-      const pickedHeroes = getPickedHeroes();
-      const remainingCharacters = heroes
-        .map((_, index) => index)
-        .filter((id) => !idsInGame.current.has(id) || !pickedHeroes.includes(id));
-      const newId =
-        remainingCharacters[Math.floor(Math.random() * remainingCharacters.length)];
-      setPlayerIdInPickedHeroes(newId);
-      setPlayerId(newId);
       setScanning(false);
-
       notie.alert({
         type: "success",
-        text: "<b>Character selected, show your Barcode to other players</b>",
+        text: "<b>Scanning complete, show your Barcode to other players</b>",
         position: "bottom",
       });
     }
@@ -225,16 +161,28 @@ export default function App() {
     [scanning]
   );
 
+  if (!user) {
+    return <AuthScreen />;
+  }
+
+  if (!currentRoomId) {
+    return <RoomBrowser onEnterRoom={handleEnterRoom} />;
+  }
+
   return (
     <>
       <Menu
         onHowToPlay={howToPlay}
-        onCreateGame={createGame}
+        onCreateGame={null}
         onJoinGame={joinGame}
         onToggleBarcode={toggleBarcode}
         scanning={scanning}
         showBarcode={showBarcode}
+        inRoom={true}
       />
+      <button className="game-back-btn" onClick={handleLeaveRoom}>
+        Leave Room
+      </button>
       <BarcodeContainer showBarcode={showBarcode} playerId={playerId} />
       <ARScene onMarkerFound={handleMarkerFound} />
     </>
