@@ -1,0 +1,33 @@
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy.orm import Session
+
+from auth import verify_password, create_access_token
+from database import get_db
+from models import User
+from schemas import Token
+
+router = APIRouter(prefix="/api", tags=["Authentication"])
+
+
+@router.post("/token", response_model=Token, summary="Get JWT token")
+def login_for_access_token(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: Session = Depends(get_db),
+):
+    user = db.query(User).filter(User.username == form_data.username).first()
+    if not user or not verify_password(form_data.password, user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    if not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="User account is disabled",
+        )
+    access_token = create_access_token(
+        data={"sub": user.username, "role": user.role}
+    )
+    return Token(access_token=access_token)
