@@ -26,7 +26,12 @@ async function request(url, options = {}) {
 
   if (res.status === 204) return null;
 
-  const data = await res.json();
+  let data;
+  try {
+    data = await res.json();
+  } catch {
+    throw new Error(`Server error (${res.status})`);
+  }
 
   if (!res.ok) {
     throw new Error(data.detail || `Request failed: ${res.status}`);
@@ -45,7 +50,12 @@ export async function login(username, password) {
     body: formData.toString(),
   });
 
-  const data = await res.json();
+  let data;
+  try {
+    data = await res.json();
+  } catch {
+    throw new Error(`Server error (${res.status})`);
+  }
   if (!res.ok) {
     throw new Error(data.detail || "Login failed");
   }

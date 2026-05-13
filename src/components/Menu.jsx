@@ -3,6 +3,7 @@ export default function Menu({
   onCreateGame,
   onJoinGame,
   onToggleBarcode,
+  onLeaveRoom,
   scanning,
   showBarcode,
   inRoom,
@@ -24,6 +25,11 @@ export default function Menu({
           style={{ color: scanning ? "red" : "white" }}
         >
           {scanning ? "Finish Scanning" : "Scan Players"}
+        </button>
+      )}
+      {onLeaveRoom && (
+        <button id="leave" onClick={onLeaveRoom} style={{ background: "#c0392b" }}>
+          Leave Room
         </button>
       )}
       <button id="barcodebtn" onClick={onToggleBarcode}>

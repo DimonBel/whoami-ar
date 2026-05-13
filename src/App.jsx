@@ -176,13 +176,11 @@ export default function App() {
         onCreateGame={null}
         onJoinGame={joinGame}
         onToggleBarcode={toggleBarcode}
+        onLeaveRoom={handleLeaveRoom}
         scanning={scanning}
         showBarcode={showBarcode}
         inRoom={true}
       />
-      <button className="game-back-btn" onClick={handleLeaveRoom}>
-        Leave Room
-      </button>
       <BarcodeContainer showBarcode={showBarcode} playerId={playerId} />
       <ARScene onMarkerFound={handleMarkerFound} />
     </>
