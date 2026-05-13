@@ -12,7 +12,6 @@ export default function ARScene({ onMarkerFound }) {
       const { rotation, scale, gltfModel, width, height, src } = hero;
       const marker = document.createElement("a-marker");
       marker.setAttribute("type", "barcode");
-      marker.setAttribute("markerhandler", "true");
       marker.setAttribute("value", i);
       if (src) {
         marker.innerHTML = `<a-image rotation="-90 0 0" width="${width}" height="${height}" src="${src}"></a-image>`;
