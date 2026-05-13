@@ -3,6 +3,11 @@ import { heroes } from "../assets.js";
 
 export default function ARScene({ onMarkerFound }) {
   const sceneRef = useRef(null);
+  const onMarkerFoundRef = useRef(onMarkerFound);
+
+  useEffect(() => {
+    onMarkerFoundRef.current = onMarkerFound;
+  }, [onMarkerFound]);
 
   useEffect(() => {
     const scene = sceneRef.current;
@@ -26,7 +31,7 @@ export default function ARScene({ onMarkerFound }) {
       }
 
       marker.addEventListener("markerFound", () => {
-        onMarkerFound(Number(marker.getAttribute("value")));
+        onMarkerFoundRef.current(Number(marker.getAttribute("value")));
       });
 
       return marker;
@@ -37,7 +42,7 @@ export default function ARScene({ onMarkerFound }) {
     return () => {
       markers.forEach((m) => m.remove());
     };
-  }, [onMarkerFound]);
+  }, []);
 
   return (
     <a-scene
