@@ -1,12 +1,22 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from database import engine, Base
 from routers import token, users, rooms
 
-Base.metadata.create_all(bind=engine)
+
+@asynccontextmanager
+async def lifespan(app):
+    Base.metadata.create_all(bind=engine)
+    from seed import seed
+    seed()
+    yield
+
 
 app = FastAPI(
+    lifespan=lifespan,
     title="WHO AM I AR - API",
     description="CRUD API for the WHO AM I Augmented Reality game.\n\n"
     "## Roles\n"
