@@ -1,3 +1,4 @@
+const API_BASE = import.meta.env.VITE_API_URL || "";
 const TOKEN_KEY = "whoami_ar_token";
 
 export function getToken() {
@@ -22,7 +23,7 @@ async function request(url, options = {}) {
     headers["Content-Type"] = "application/json";
   }
 
-  const res = await fetch(url, { ...options, headers });
+  const res = await fetch(API_BASE + url, { ...options, headers });
 
   if (res.status === 204) return null;
 
@@ -44,7 +45,7 @@ export async function login(username, password) {
   formData.append("username", username);
   formData.append("password", password);
 
-  const res = await fetch("/api/token", {
+  const res = await fetch(API_BASE + "/api/token", {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: formData.toString(),
