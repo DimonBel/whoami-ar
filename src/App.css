@@ -74,6 +74,281 @@ li {
   overflow: scroll;
 }
 
+/* Auth Screen */
+.auth-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 200;
+}
+
+.auth-header {
+  background-color: #f7961d;
+  width: 100%;
+  text-align: center;
+  padding: 15px 0;
+  color: #fff;
+}
+
+.auth-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.auth-header span {
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 40px;
+  width: 100%;
+  max-width: 320px;
+  padding: 0 20px;
+}
+
+.auth-form input {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  margin: 8px 0;
+  font-size: 0.95rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  outline: none;
+  font-family: inherit;
+}
+
+.auth-form input:focus {
+  border-color: #497862;
+}
+
+.auth-submit {
+  width: 100%;
+  justify-content: center;
+  margin-top: 12px;
+  padding: 0.6rem 0;
+  font-size: 1rem;
+  height: auto;
+}
+
+.auth-toggle {
+  margin-top: 16px;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.auth-toggle button {
+  background: none;
+  color: #497862;
+  text-decoration: underline;
+  padding: 0;
+  margin: 0;
+  font-size: 0.85rem;
+  height: auto;
+  display: inline;
+}
+
+.auth-error {
+  width: 100%;
+  background: #ffe0e0;
+  color: #c00;
+  padding: 8px 12px;
+  border-radius: 0.5rem;
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.auth-loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+/* Room Browser */
+.room-browser {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  z-index: 200;
+  overflow-y: auto;
+}
+
+.room-browser-header {
+  background-color: #f7961d;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  color: #fff;
+  box-sizing: border-box;
+}
+
+.room-browser-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #fff;
+}
+
+.room-browser-header .header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.room-browser-header .header-actions button {
+  margin: 0;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.8rem;
+}
+
+.room-browser-header .user-info {
+  font-size: 0.8rem;
+  opacity: 0.9;
+}
+
+.room-list {
+  list-style: none;
+  padding: 15px;
+  margin: 0;
+}
+
+.room-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  margin-bottom: 8px;
+  background: #f9f9f9;
+  border-radius: 0.5rem;
+  border: 1px solid #eee;
+}
+
+.room-item-info h3 {
+  margin: 0 0 4px 0;
+  font-size: 1rem;
+}
+
+.room-item-info span {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.room-item-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.room-item-actions button {
+  margin: 0;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.8rem;
+}
+
+.btn-join {
+  background: #497862;
+}
+
+.btn-delete {
+  background: #c0392b;
+}
+
+.btn-create {
+  background: #497862;
+}
+
+.room-empty {
+  text-align: center;
+  color: #999;
+  margin-top: 60px;
+  font-size: 0.95rem;
+}
+
+.room-form-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 210;
+}
+
+.room-form {
+  background: #fff;
+  padding: 24px;
+  border-radius: 0.5rem;
+  width: 90%;
+  max-width: 320px;
+}
+
+.room-form h3 {
+  margin: 0 0 16px 0;
+}
+
+.room-form input {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  margin: 8px 0;
+  font-size: 0.95rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  outline: none;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.room-form .form-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.room-form .form-actions button {
+  flex: 1;
+  justify-content: center;
+  padding: 0.5rem 0;
+  height: auto;
+}
+
+.btn-cancel {
+  background: #999;
+}
+
+/* Game view back button */
+.game-back-btn {
+  position: fixed;
+  top: 55px;
+  right: 10px;
+  z-index: 101;
+  font-size: 0.8rem;
+}
+
 /* AR.js */
 .a-enter-vr {
   display: none;
