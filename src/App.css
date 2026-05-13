@@ -18,7 +18,7 @@ button {
 }
 
 button img {
-  width: 2.8rem;
+  width: 2rem;
   height: auto;
 }
 
@@ -28,17 +28,17 @@ button img {
   top: 0;
   left: 0;
   display: flex;
+  justify-content: space-around;
   align-items: center;
   width: 100%;
-  height: 70px;
-  padding: 0 6px;
+  height: 50px;
+  padding: 5px 0;
   box-sizing: border-box;
   z-index: 100;
-  overflow: hidden;
 }
 
 #menu button {
-  height: 38px;
+  height: 100%;
   margin: 0 4px;
   flex: 1;
   justify-content: center;
@@ -46,18 +46,19 @@ button img {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
+  padding: 0.3rem 0.4rem;
 }
 
 #how-to-play,
 #barcodebtn {
-  flex: 0 0 54px;
+  flex: 0 0 auto;
   padding: 0.3rem;
 }
 
 #how-to-play img,
 #barcodebtn img {
-  width: 2.2rem;
+  width: 2rem;
 }
 
 #barcode-container {
