@@ -1,66 +1,11 @@
-import { useEffect, useRef } from "react";
-import { heroes } from "../assets.js";
+import { useEffect } from "react";
 
 export default function ARScene({ onMarkerFound }) {
-  const sceneRef = useRef(null);
-  const onMarkerFoundRef = useRef(onMarkerFound);
-
   useEffect(() => {
-    onMarkerFoundRef.current = onMarkerFound;
+    const handler = (e) => onMarkerFound(e.detail);
+    window.addEventListener("arMarkerFound", handler);
+    return () => window.removeEventListener("arMarkerFound", handler);
   }, [onMarkerFound]);
 
-  useEffect(() => {
-    const scene = sceneRef.current;
-    if (!scene) return;
-
-    const base = import.meta.env.BASE_URL;
-    let markers = [];
-
-    const addMarkers = () => {
-      markers = heroes.map((hero, i) => {
-        const { rotation, scale, gltfModel, width, height, src } = hero;
-        const marker = document.createElement("a-marker");
-        marker.setAttribute("type", "barcode");
-        marker.setAttribute("value", i);
-        if (src) {
-          marker.innerHTML = `<a-image rotation="-90 0 0" width="${width}" height="${height}" src="${base}${src}"></a-image>`;
-        } else {
-          const binScale = scale
-            .split(" ")
-            .map((n) => String(Number(n) * 2))
-            .join(" ");
-          marker.innerHTML = `<a-entity rotation="${rotation}" scale="${binScale}" gltf-model="${gltfModel}"></a-entity>`;
-        }
-        marker.addEventListener("markerFound", () => {
-          onMarkerFoundRef.current(Number(marker.getAttribute("value")));
-        });
-        return marker;
-      });
-      markers.forEach((m) => scene.appendChild(m));
-    };
-
-    if (scene.hasLoaded) {
-      addMarkers();
-    } else {
-      scene.addEventListener("loaded", addMarkers);
-    }
-
-    return () => {
-      scene.removeEventListener("loaded", addMarkers);
-      markers.forEach((m) => m.remove());
-    };
-  }, []);
-
-  return (
-    <a-scene
-      ref={sceneRef}
-      embedded
-      arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;"
-    >
-      <a-marker preset="hiro">
-        <a-entity position="0 -1 0" scale="0.05 0.05 0.05" gltf-model="trex/scene.gltf"></a-entity>
-      </a-marker>
-      <a-entity camera></a-entity>
-    </a-scene>
-  );
+  return null;
 }
